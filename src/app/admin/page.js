@@ -20,24 +20,6 @@ export default function Admin() {
   const fileInputRef = useRef(null);
   const editorRef = useRef(null);
 
-  const execCmd = (command, value = null) => {
-    if (typeof document !== 'undefined') {
-      document.execCommand(command, false, value);
-      if (editorRef.current) {
-        setNewBlog(prev => ({ ...prev, content: editorRef.current.innerHTML }));
-      }
-    }
-  };
-
-  // Sync editor content when visual tab mounts
-  useEffect(() => {
-    if (editorTab === 'visual' && editorRef.current) {
-      if (editorRef.current.innerHTML !== newBlog.content) {
-        editorRef.current.innerHTML = newBlog.content || '';
-      }
-    }
-  }, [editorTab]);
-
   // Lists
   const [contacts, setContacts] = useState([]);
   const [applications, setApplications] = useState([]);
@@ -80,6 +62,24 @@ export default function Admin() {
   });
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+  const execCmd = (command, value = null) => {
+    if (typeof document !== 'undefined') {
+      document.execCommand(command, false, value);
+      if (editorRef.current) {
+        setNewBlog(prev => ({ ...prev, content: editorRef.current.innerHTML }));
+      }
+    }
+  };
+
+  // Sync editor content when visual tab mounts
+  useEffect(() => {
+    if (editorTab === 'visual' && editorRef.current) {
+      if (editorRef.current.innerHTML !== newBlog.content) {
+        editorRef.current.innerHTML = newBlog.content || '';
+      }
+    }
+  }, [editorTab]);
 
   useEffect(() => {
     const savedToken = sessionStorage.getItem('adminToken');
@@ -668,7 +668,10 @@ export default function Admin() {
                       </button>
                     );
                   })}
-                           {/* Row 5: Editor visual/html/css/preview tabs */}
+                </div>
+              </div>
+
+              {/* Row 5: Editor visual/html/css/preview tabs */}
               <div className="border border-slate-200 rounded-2xl overflow-hidden mt-2">
                 <div className="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center justify-between">
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">BODY (HTML)</span>
