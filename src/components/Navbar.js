@@ -5,6 +5,7 @@ import { useTheme } from './ThemeContext';
 import Logo from './Logo';
 import SearchModal from './SearchModal';
 import { Search, Sun, Moon, Menu, X, ChevronDown, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -134,46 +135,62 @@ export default function Navbar() {
       </header>
 
       {/* Mobile Drawer Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 flex lg:hidden bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-sm ml-auto bg-white dark:bg-slate-900 h-full p-6 shadow-2xl flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-6">
-                <Logo />
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 text-slate-400 hover:text-slate-950 dark:hover:text-white rounded-lg"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                {mainLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex lg:hidden bg-slate-950/60 backdrop-blur-sm"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="w-full max-w-[280px] ml-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl h-full p-6 shadow-2xl flex flex-col justify-between border-l border-slate-100 dark:border-slate-850"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div>
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-6">
+                  <Logo />
+                  <button
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm font-semibold uppercase tracking-wider text-slate-700 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors"
+                    className="p-1 text-slate-400 hover:text-slate-950 dark:hover:text-white rounded-lg focus:outline-none"
                   >
-                    {link.name}
-                  </a>
-                ))}
-              </div>
-            </div>
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
 
-            <div className="mt-8 border-t border-slate-100 dark:border-slate-800 pt-6">
-              <a
-                href="/contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-3 block text-center text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-indigo-500 to-emerald-500 rounded-xl"
-              >
-                Book Consultation
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
+                <div className="flex flex-col gap-1">
+                  {mainLinks.map((link) => (
+                    <a
+                      key={link.name}
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-indigo-500 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-emerald-400 dark:hover:bg-slate-800/40 rounded-xl transition-all duration-200 flex items-center justify-between group"
+                    >
+                      <span>{link.name}</span>
+                      <span className="h-1.5 w-1.5 rounded-full bg-transparent group-hover:bg-indigo-500 dark:group-hover:bg-emerald-400 transition-colors"></span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 border-t border-slate-100 dark:border-slate-800 pt-6">
+                <a
+                  href="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 block text-center text-[10px] font-bold uppercase tracking-widest text-white bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-600 hover:to-emerald-600 rounded-xl shadow-md shadow-indigo-500/10 hover:shadow-indigo-500/20 transition-all active:scale-[0.98]"
+                >
+                  Book Consultation
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Global Search Modal */}
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
