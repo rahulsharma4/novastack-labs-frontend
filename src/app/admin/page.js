@@ -647,7 +647,10 @@ export default function Admin() {
                       </button>
                     );
                   })}
-                           {/* Row 5: Editor visual/html/css/preview tabs */}
+                </div>
+              </div>
+
+              {/* Row 5: Editor visual/html/css/preview tabs */}
               <div className="border border-slate-200 rounded-2xl overflow-hidden mt-2">
                 <div className="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center justify-between">
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Body content editor</span>
