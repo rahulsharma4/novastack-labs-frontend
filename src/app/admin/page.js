@@ -4,7 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   ShieldAlert, LogIn, Mail, FolderHeart, FileText, Trash2, Send, 
   Plus, Briefcase, BookOpen, Layers, Search, Eye, Edit, X, Image, 
-  Settings, Users, Globe, CreditCard, ShoppingBag, LogOut, CheckSquare, Square
+  Settings, Users, Globe, CreditCard, ShoppingBag, LogOut, CheckSquare, Square,
+  Undo, Redo, Bold, Italic, Underline, Strikethrough, AlignLeft, AlignCenter, AlignRight, 
+  AlignJustify, List, ListOrdered, Indent, Outdent, MoreHorizontal
 } from 'lucide-react';
 
 export default function Admin() {
@@ -16,6 +18,25 @@ export default function Admin() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('Any');
   const fileInputRef = useRef(null);
+  const editorRef = useRef(null);
+
+  const execCmd = (command, value = null) => {
+    if (typeof document !== 'undefined') {
+      document.execCommand(command, false, value);
+      if (editorRef.current) {
+        setNewBlog(prev => ({ ...prev, content: editorRef.current.innerHTML }));
+      }
+    }
+  };
+
+  // Sync editor content when visual tab mounts
+  useEffect(() => {
+    if (editorTab === 'visual' && editorRef.current) {
+      if (editorRef.current.innerHTML !== newBlog.content) {
+        editorRef.current.innerHTML = newBlog.content || '';
+      }
+    }
+  }, [editorTab]);
 
   // Lists
   const [contacts, setContacts] = useState([]);
@@ -647,13 +668,10 @@ export default function Admin() {
                       </button>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Row 5: Editor visual/html/css/preview tabs */}
+                           {/* Row 5: Editor visual/html/css/preview tabs */}
               <div className="border border-slate-200 rounded-2xl overflow-hidden mt-2">
                 <div className="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center justify-between">
-                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Body content editor</span>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">BODY (HTML)</span>
                   <div className="flex bg-slate-200 p-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
                     {['visual', 'html', 'css', 'preview'].map((tab) => (
                       <button
@@ -661,7 +679,7 @@ export default function Admin() {
                         type="button"
                         onClick={() => setEditorTab(tab)}
                         className={`px-3 py-1.5 rounded-md transition-colors ${
-                          editorTab === tab ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-800'
+                          editorTab === tab ? 'bg-slate-900 text-white font-bold' : 'text-slate-500 hover:text-slate-800'
                         }`}
                       >
                         {tab}
@@ -673,27 +691,66 @@ export default function Admin() {
                 <div className="p-4 bg-white">
                   {editorTab === 'visual' && (
                     <div className="flex flex-col gap-2">
-                      <div className="border border-slate-200 rounded-xl bg-slate-50 p-2 flex gap-1 items-center mb-1 text-[9px] font-bold text-slate-400">
-                        <span>Paragraph</span>
-                        <span>|</span>
-                        <span className="font-serif font-bold">B</span>
-                        <span className="italic">I</span>
-                        <span className="underline">U</span>
-                        <span className="line-through">S</span>
+                      {/* Rich Text Editor Toolbar */}
+                      <div className="flex flex-wrap gap-1.5 items-center p-2 bg-slate-50 border border-slate-200 rounded-xl mb-1 text-slate-500">
+                        <button type="button" onClick={() => execCmd('undo')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Undo"><Undo className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => execCmd('redo')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Redo"><Redo className="h-3.5 w-3.5" /></button>
+                        
+                        <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                        
+                        <select
+                          onChange={(e) => execCmd('formatBlock', e.target.value)}
+                          className="bg-white border border-slate-200 rounded px-2 py-1 text-[10px] font-bold text-slate-600 focus:outline-none"
+                          defaultValue="p"
+                        >
+                          <option value="p">Paragraph</option>
+                          <option value="h1">Heading 1</option>
+                          <option value="h2">Heading 2</option>
+                          <option value="h3">Heading 3</option>
+                          <option value="h4">Heading 4</option>
+                          <option value="pre">Code Block</option>
+                        </select>
+                        
+                        <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                        
+                        <button type="button" onClick={() => execCmd('bold')} className="p-1.5 hover:bg-slate-200 rounded transition-colors font-bold text-slate-800" title="Bold"><Bold className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => execCmd('italic')} className="p-1.5 hover:bg-slate-200 rounded transition-colors italic" title="Italic"><Italic className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => execCmd('underline')} className="p-1.5 hover:bg-slate-200 rounded transition-colors underline" title="Underline"><Underline className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => execCmd('strikeThrough')} className="p-1.5 hover:bg-slate-200 rounded transition-colors line-through" title="Strikethrough"><Strikethrough className="h-3.5 w-3.5" /></button>
+                        
+                        <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                        
+                        <button type="button" onClick={() => execCmd('justifyLeft')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Align Left"><AlignLeft className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => execCmd('justifyCenter')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Align Center"><AlignCenter className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => execCmd('justifyRight')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Align Right"><AlignRight className="h-3.5 w-3.5" /></button>
+                        
+                        <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                        
+                        <button type="button" onClick={() => execCmd('insertUnorderedList')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Bulleted List"><List className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => execCmd('insertOrderedList')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Numbered List"><ListOrdered className="h-3.5 w-3.5" /></button>
+                        
+                        <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                        
+                        <button type="button" onClick={() => execCmd('outdent')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Outdent"><Outdent className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => execCmd('indent')} className="p-1.5 hover:bg-slate-200 rounded transition-colors" title="Indent"><Indent className="h-3.5 w-3.5" /></button>
+                        
+                        <button type="button" className="p-1.5 hover:bg-slate-200 rounded transition-colors ml-auto" title="More options"><MoreHorizontal className="h-3.5 w-3.5" /></button>
                       </div>
-                      <textarea
-                        rows={6}
-                        value={newBlog.content}
-                        onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
-                        placeholder="Write dynamic content details here..."
-                        className="w-full border border-slate-100 rounded-xl p-3 text-xs focus:outline-none resize-none font-sans"
+                      
+                      {/* Interactive Visual Editor Workspace */}
+                      <div
+                        ref={editorRef}
+                        contentEditable
+                        onInput={(e) => setNewBlog({ ...newBlog, content: e.currentTarget.innerHTML })}
+                        className="w-full min-h-[250px] max-h-[350px] overflow-y-auto border border-slate-200 rounded-xl p-4 text-xs focus:outline-none bg-white prose max-w-none text-slate-800"
+                        style={{ outline: 'none' }}
                       />
                     </div>
                   )}
 
                   {editorTab === 'html' && (
                     <textarea
-                      rows={8}
+                      rows={12}
                       value={newBlog.content}
                       onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
                       placeholder="<!-- Enter HTML source code -->&#10;<div class='custom-blog-post'>&#10;  <h3>Dynamic Header</h3>&#10;</div>"
@@ -703,7 +760,7 @@ export default function Admin() {
 
                   {editorTab === 'css' && (
                     <textarea
-                      rows={8}
+                      rows={12}
                       value={newBlog.cssContent}
                       onChange={(e) => setNewBlog({ ...newBlog, cssContent: e.target.value })}
                       placeholder="/* Enter custom styles scoped to this article */&#10;.custom-blog-post h3 {&#10;  color: #6366f1;&#10;}"
