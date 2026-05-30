@@ -1,6 +1,7 @@
 import React from 'react';
 
-export default function Logo({ className = "h-8 w-auto", showText = true }) {
+export default function Logo({ className = "h-8 w-auto", showText = true, variant = 'dark' }) {
+  const textColor = variant === 'light' ? 'text-white' : 'text-slate-900';
   return (
     <div className="flex items-center gap-3 cursor-pointer group">
       <svg
@@ -57,7 +58,7 @@ export default function Logo({ className = "h-8 w-auto", showText = true }) {
         </defs>
       </svg>
       {showText && (
-        <span className="font-bold text-sm sm:text-base md:text-lg tracking-wider text-slate-900 uppercase transition-colors duration-200">
+        <span className={`font-bold text-sm sm:text-base md:text-lg tracking-wider ${textColor} uppercase transition-colors duration-200`}>
           NovaStack<span className="text-emerald-500 font-extrabold">Labs</span>
         </span>
       )}

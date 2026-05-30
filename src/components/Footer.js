@@ -63,7 +63,7 @@ export default function Footer() {
         
         {/* Info Column */}
         <div className="md:col-span-2 flex flex-col gap-4">
-          <Logo />
+          <Logo variant="light" />
           <p className="text-xs text-slate-500 max-w-sm leading-relaxed mt-2">
             NovaStack Labs is a premium software engineering agency. We architect and deploy high-performance digital products for enterprises, scaling startups, and progressive founders.
           </p>
