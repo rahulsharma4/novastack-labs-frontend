@@ -98,8 +98,8 @@ export default function Blog() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {filteredArticles.map((art) => (
               <div
-                key={art.id}
-                id={art.id}
+                key={art._id || art.id}
+                id={art._id || art.id}
                 onClick={() => setReadingArticle(art)}
                 className="group border border-slate-200/85 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-900/20 rounded-2xl p-6 flex flex-col justify-between hover:border-indigo-500/40 hover:shadow-md transition-all duration-300 cursor-pointer"
               >
@@ -182,9 +182,15 @@ export default function Blog() {
               <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 text-[10px] text-slate-500">
                 <span className="font-bold uppercase tracking-wider block mb-1">Article tags:</span>
                 <div className="flex flex-wrap gap-2">
-                  {readingArticle.tags.map(t => (
-                    <span key={t} className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">#{t}</span>
-                  ))}
+                  {Array.isArray(readingArticle.tags) ? (
+                    readingArticle.tags.map(t => (
+                      <span key={t} className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">#{t}</span>
+                    ))
+                  ) : (
+                    readingArticle.tags ? readingArticle.tags.split(',').map((t, idx) => (
+                      <span key={idx} className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">#{t.trim()}</span>
+                    )) : null
+                  )}
                 </div>
               </div>
             </div>
