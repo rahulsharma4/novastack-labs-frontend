@@ -45,7 +45,7 @@ export default function Footer() {
           <p className="text-xs text-slate-500 max-w-sm leading-relaxed mt-2">
             NovaStack Labs is a premium software engineering agency. We architect and deploy high-performance digital products for enterprises, scaling startups, and progressive founders.
           </p>
-          <div className="flex flex-col gap-2.5 text-xs text-slate-450 mt-2">
+          <div className="flex flex-col gap-2.5 text-xs text-slate-400 mt-2">
             <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-slate-500" /> New York, NY & New Delhi, India</span>
             <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-500" /> hello@novastacklabs.com</span>
             <span className="flex items-center gap-2"><PhoneCall className="h-4 w-4 text-slate-500" /> +1 (555) 019-2834</span>
@@ -116,3 +116,4 @@ export default function Footer() {
     </footer>
   );
 }
+

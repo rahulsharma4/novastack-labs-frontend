@@ -168,3 +168,4 @@ export const portfolioData = [
     metrics: { playRating: "4.9/5", videoBuffering: "-80%", syncStability: "99.9%" }
   }
 ];
+

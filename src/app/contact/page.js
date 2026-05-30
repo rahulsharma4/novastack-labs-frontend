@@ -48,7 +48,7 @@ export default function Contact() {
       <section className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-12 text-center">
         <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest block mb-3">Reach Out</span>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-4">Let&rsquo;s Build Together</h1>
-        <p className="text-xs sm:text-sm text-slate-550 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
           Book a direct workspace consultation or submit an inquiry using our secure form below.
         </p>
       </section>
@@ -58,7 +58,7 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           
           {/* Left Panel: Contact Form */}
-          <div className="p-6 border border-slate-200 dark:border-slate-850 bg-slate-50/20 dark:bg-slate-900/10 rounded-3xl">
+          <div className="p-6 border border-slate-200 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-900/10 rounded-3xl">
             <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-6">Send a Message</h2>
             
             {submitted ? (
@@ -89,7 +89,7 @@ export default function Contact() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="e.g. rahul@company.com"
-                      className="w-full bg-white dark:bg-slate-950 border border-slate-202 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export default function Contact() {
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="e.g. Custom SaaS Development"
-                    className="w-full bg-white dark:bg-slate-950 border border-slate-202 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
@@ -114,7 +114,7 @@ export default function Contact() {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Outline your project scope, timeline requirements, database size..."
-                    className="w-full bg-white dark:bg-slate-950 border border-slate-202 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 resize-none"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 resize-none"
                   />
                 </div>
 
@@ -129,7 +129,7 @@ export default function Contact() {
           </div>
 
           {/* Right Panel: Calendar Scheduling Booking mock */}
-          <div className="p-6 border border-slate-202 dark:border-slate-850 bg-slate-50/20 dark:bg-slate-900/10 rounded-3xl flex flex-col justify-between">
+          <div className="p-6 border border-slate-200 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-900/10 rounded-3xl flex flex-col justify-between">
             <div>
               <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-emerald-500" /> Book Consultation Call
@@ -180,8 +180,8 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="p-4 bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-850 rounded-2xl flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-850 flex items-center justify-center shrink-0">
+            <div className="p-4 bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
                 <Mail className="h-4 w-4 text-slate-500" />
               </div>
               <div className="text-xs">
@@ -197,3 +197,4 @@ export default function Contact() {
     </div>
   );
 }
+

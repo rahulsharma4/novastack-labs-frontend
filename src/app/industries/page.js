@@ -38,7 +38,7 @@ export default function Industries() {
           {industries.map((ind) => (
             <div
               key={ind.name}
-              className="p-6 border border-slate-200 dark:border-slate-850 bg-slate-50/20 dark:bg-slate-900/20 rounded-3xl hover:border-indigo-500/40 transition-colors"
+              className="p-6 border border-slate-200 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-900/20 rounded-3xl hover:border-indigo-500/40 transition-colors"
             >
               <div className="flex gap-4">
                 <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-500 dark:text-emerald-400 flex items-center justify-center shrink-0">
@@ -46,9 +46,9 @@ export default function Industries() {
                 </div>
                 <div>
                   <h3 className="text-md font-bold text-slate-900 dark:text-white mb-2">{ind.name}</h3>
-                  <p className="text-xs text-slate-550 dark:text-slate-400 leading-relaxed mb-4">{ind.desc}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{ind.desc}</p>
                   
-                  <div className="p-4 bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-850 rounded-2xl">
+                  <div className="p-4 bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl">
                     <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Our Resolution:</span>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">{ind.solution}</p>
                   </div>
@@ -62,3 +62,4 @@ export default function Industries() {
     </div>
   );
 }
+

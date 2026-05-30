@@ -38,7 +38,7 @@ export default function Process() {
             <div key={step.title} className="flex gap-6 relative group">
               {/* Timeline Connector Line */}
               {idx !== steps.length - 1 && (
-                <div className="absolute top-10 left-5 bottom-[-40px] w-[1px] bg-slate-200 dark:bg-slate-850"></div>
+                <div className="absolute top-10 left-5 bottom-[-40px] w-[1px] bg-slate-200 dark:bg-slate-800"></div>
               )}
               
               {/* Step indicator */}
@@ -47,13 +47,13 @@ export default function Process() {
               </div>
 
               {/* Step detail card */}
-              <div className="flex-1 p-5 border border-slate-205 dark:border-slate-850 rounded-2xl bg-slate-50/30 dark:bg-slate-900/10 flex flex-col sm:flex-row gap-4 items-start group-hover:border-indigo-500/30 transition-colors">
+              <div className="flex-1 p-5 border border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/10 flex flex-col sm:flex-row gap-4 items-start group-hover:border-indigo-500/30 transition-colors">
                 <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-950 text-indigo-500 dark:text-emerald-400">
                   <step.icon className="h-5 w-5" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-1">{step.title}</h3>
-                  <p className="text-xs text-slate-550 dark:text-slate-400 leading-relaxed">{step.desc}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             </div>
@@ -64,3 +64,4 @@ export default function Process() {
     </div>
   );
 }
+

@@ -39,12 +39,12 @@ export default function About() {
       {/* Corporate Story */}
       <section className="relative z-10 max-w-5xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="border border-slate-200 dark:border-slate-850 p-6 rounded-2xl bg-slate-50/50 dark:bg-slate-900/20">
+          <div className="border border-slate-200 dark:border-slate-800 p-6 rounded-2xl bg-slate-50/50 dark:bg-slate-900/20">
             <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Our Origins</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-450 leading-relaxed mb-4">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
               NovaStack Labs was founded to fill a gap: client frustration with template-heavy development agencies who deliver bloated, slow codebases. 
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-450 leading-relaxed">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               We started as a group of senior software architects. Today, we remain an engineering-led agency focused on technical quality, design craftsmanship, and server performance.
             </p>
           </div>
@@ -106,7 +106,7 @@ export default function About() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {leaders.map((l) => (
-            <div key={l.name} className="p-6 border border-slate-200 dark:border-slate-850 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 hover:border-indigo-500/40 transition-colors">
+            <div key={l.name} className="p-6 border border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 hover:border-indigo-500/40 transition-colors">
               <h4 className="text-sm font-bold text-slate-900 dark:text-white">{l.name}</h4>
               <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest block mt-1 mb-3">{l.role}</span>
               <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{l.desc}</p>
@@ -118,3 +118,4 @@ export default function About() {
     </div>
   );
 }
+

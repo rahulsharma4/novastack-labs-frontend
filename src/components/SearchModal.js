@@ -82,7 +82,7 @@ export default function SearchModal({ isOpen, onClose }) {
                         key={item.id}
                         href={`/services#${item.id}`}
                         onClick={onClose}
-                        className="p-3 bg-slate-950/40 hover:bg-slate-800/40 border border-slate-850 rounded-xl block transition-colors group"
+                        className="p-3 bg-slate-950/40 hover:bg-slate-800/40 border border-slate-800 rounded-xl block transition-colors group"
                       >
                         <span className="text-sm font-semibold text-white group-hover:text-emerald-400 block transition-colors">{item.title}</span>
                         <span className="text-xs text-slate-400 mt-1 block">{item.shortDesc}</span>
@@ -104,7 +104,7 @@ export default function SearchModal({ isOpen, onClose }) {
                         key={item.id}
                         href={`/portfolio#${item.id}`}
                         onClick={onClose}
-                        className="p-3 bg-slate-950/40 hover:bg-slate-800/40 border border-slate-850 rounded-xl block transition-colors group"
+                        className="p-3 bg-slate-950/40 hover:bg-slate-800/40 border border-slate-800 rounded-xl block transition-colors group"
                       >
                         <span className="text-sm font-semibold text-white group-hover:text-indigo-400 block transition-colors">{item.title}</span>
                         <span className="text-xs text-slate-400 mt-1 block">{item.summary}</span>
@@ -126,7 +126,7 @@ export default function SearchModal({ isOpen, onClose }) {
                         key={item.id}
                         href={`/blog#${item.id}`}
                         onClick={onClose}
-                        className="p-3 bg-slate-950/40 hover:bg-slate-800/40 border border-slate-850 rounded-xl block transition-colors group"
+                        className="p-3 bg-slate-950/40 hover:bg-slate-800/40 border border-slate-800 rounded-xl block transition-colors group"
                       >
                         <span className="text-sm font-semibold text-white group-hover:text-emerald-400 block transition-colors">{item.title}</span>
                         <span className="text-xs text-slate-400 mt-1 block">{item.summary}</span>
@@ -142,3 +142,4 @@ export default function SearchModal({ isOpen, onClose }) {
     </div>
   );
 }
+

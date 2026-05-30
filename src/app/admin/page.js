@@ -231,7 +231,7 @@ export default function Admin() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-slate-900">NovaStack Admin Console</h1>
-            <p className="text-xs text-slate-550">Dynamic control panel for logs and client inquiries.</p>
+            <p className="text-xs text-slate-500">Dynamic control panel for logs and client inquiries.</p>
           </div>
           <button
             onClick={handleLogout}
@@ -272,7 +272,7 @@ export default function Admin() {
         {/* Dynamic content rendering */}
         <div className="min-h-[400px]">
           {loading ? (
-            <div className="py-20 text-center text-xs text-slate-450">Loading database records...</div>
+            <div className="py-20 text-center text-xs text-slate-400">Loading database records...</div>
           ) : activeTab === 'contacts' ? (
             /* Tab 1: Inquiries */
             <div className="grid grid-cols-1 gap-4">
@@ -305,10 +305,10 @@ export default function Admin() {
                 <div className="text-center py-20 text-slate-400 text-xs">No candidate applications logged yet.</div>
               ) : (
                 applications.map((app) => (
-                  <div key={app._id} className="p-6 bg-white border border-slate-202 rounded-3xl flex items-center justify-between gap-6 shadow-sm">
+                  <div key={app._id} className="p-6 bg-white border border-slate-200 rounded-3xl flex items-center justify-between gap-6 shadow-sm">
                     <div>
                       <div className="flex items-center gap-3">
-                        <h4 className="font-bold text-slate-850 text-xs">{app.name}</h4>
+                        <h4 className="font-bold text-slate-800 text-xs">{app.name}</h4>
                         <span className="px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">{app.jobTitle}</span>
                       </div>
                       <span className="text-[10px] text-slate-400">{app.email}</span>
@@ -336,7 +336,7 @@ export default function Admin() {
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4 flex items-center gap-1.5"><Plus className="h-4 w-4 text-emerald-500" /> Publish Article</h3>
                 <form onSubmit={handlePublishBlog} className="flex flex-col gap-4">
                   <div>
-                    <label className="block text-[9px] font-bold text-slate-450 uppercase tracking-widest mb-1.5">Article Title</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Article Title</label>
                     <input
                       type="text"
                       required
@@ -371,7 +371,7 @@ export default function Admin() {
                       value={newBlog.summary}
                       onChange={(e) => setNewBlog({ ...newBlog, summary: e.target.value })}
                       placeholder="Short teaser description..."
-                      className="w-full bg-slate-50 border border-slate-202 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 resize-none"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 resize-none"
                     />
                   </div>
                   <div>
@@ -381,7 +381,7 @@ export default function Admin() {
                       value={newBlog.tags}
                       onChange={(e) => setNewBlog({ ...newBlog, tags: e.target.value })}
                       placeholder="e.g. Node, Cluster, API"
-                      className="w-full bg-slate-50 border border-slate-202 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500"
                     />
                   </div>
                   <button
@@ -400,10 +400,10 @@ export default function Admin() {
                   <div className="text-center py-20 text-slate-400 text-xs">No blogs found in database.</div>
                 ) : (
                   blogs.map((b) => (
-                    <div key={b._id} className="p-4 bg-white border border-slate-202 rounded-2xl flex items-center justify-between gap-4 shadow-sm">
+                    <div key={b._id} className="p-4 bg-white border border-slate-200 rounded-2xl flex items-center justify-between gap-4 shadow-sm">
                       <div className="min-w-0">
                         <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">{b.category}</span>
-                        <h4 className="font-bold text-slate-850 text-xs truncate mt-0.5">{b.title}</h4>
+                        <h4 className="font-bold text-slate-800 text-xs truncate mt-0.5">{b.title}</h4>
                         <span className="block text-[9px] text-slate-400 mt-1">{b.date} &bull; {b.author}</span>
                       </div>
                       <button
@@ -426,3 +426,4 @@ export default function Admin() {
     </div>
   );
 }
+

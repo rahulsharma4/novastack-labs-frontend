@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function CookiePolicy() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-20 text-xs leading-relaxed text-slate-655 dark:text-slate-400">
+    <div className="max-w-4xl mx-auto px-6 py-20 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
       <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-6">Cookie Policy</h1>
       
       <p className="mb-4"><strong>Effective Date: June 1, 2026</strong></p>
@@ -29,3 +29,4 @@ export default function CookiePolicy() {
     </div>
   );
 }
+

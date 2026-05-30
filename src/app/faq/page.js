@@ -39,7 +39,7 @@ export default function FAQ() {
       <section className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-12 text-center">
         <span className="text-[10px] font-bold text-indigo-550 dark:text-emerald-400 uppercase tracking-widest block mb-3">FAQ Directory</span>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-4">Frequently Asked Questions</h1>
-        <p className="text-xs sm:text-sm text-slate-550 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
           Search our catalog of responses detailing technical workflows, data security protocols, and payment packages.
         </p>
       </section>
@@ -53,8 +53,8 @@ export default function FAQ() {
               onClick={() => setActiveCategory(c.id)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeCategory === c.id
-                  ? 'bg-slate-905 dark:bg-emerald-500 text-white shadow-md'
-                  : 'bg-slate-100 dark:bg-slate-900 text-slate-550 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  ? 'bg-slate-900 dark:bg-emerald-500 text-white shadow-md'
+                  : 'bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
               }`}
             >
               {c.name}
@@ -78,10 +78,10 @@ export default function FAQ() {
                 <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                   <HelpCircle className="h-4 w-4 text-emerald-500 shrink-0" /> {faq.q}
                 </span>
-                <ChevronDown className={`h-4 w-4 text-slate-405 transition-transform duration-200 ${activeFaq === idx ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${activeFaq === idx ? 'rotate-180' : ''}`} />
               </button>
               {activeFaq === idx && (
-                <div className="px-5 pb-5 text-xs text-slate-550 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-850 pt-3">
+                <div className="px-5 pb-5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-3">
                   {faq.a}
                 </div>
               )}
@@ -93,3 +93,4 @@ export default function FAQ() {
     </div>
   );
 }
+

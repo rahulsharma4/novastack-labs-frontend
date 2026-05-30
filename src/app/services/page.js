@@ -29,7 +29,7 @@ export default function Services() {
             <div
               key={s.id}
               id={s.id}
-              className="scroll-mt-20 p-6 border border-slate-200 dark:border-slate-850 rounded-3xl bg-slate-50/20 dark:bg-slate-900/20 flex flex-col justify-between hover:border-indigo-500/40 transition-colors"
+              className="scroll-mt-20 p-6 border border-slate-200 dark:border-slate-800 rounded-3xl bg-slate-50/20 dark:bg-slate-900/20 flex flex-col justify-between hover:border-indigo-500/40 transition-colors"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -45,13 +45,13 @@ export default function Services() {
                   {s.features.map((f) => (
                     <div key={f} className="flex items-center gap-2">
                       <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span className="text-[10px] font-semibold text-slate-700 dark:text-slate-350">{f}</span>
+                      <span className="text-[10px] font-semibold text-slate-700 dark:text-slate-400">{f}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Architecture Info */}
-                <div className="p-4 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850 text-xs">
+                <div className="p-4 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs">
                   <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-white uppercase tracking-wide text-[10px] mb-1">
                     <Cpu className="h-3.5 w-3.5 text-indigo-500" /> Target Architecture:
                   </div>
@@ -59,7 +59,7 @@ export default function Services() {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-slate-850">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <div>
                   <span className="block text-[8px] uppercase tracking-wider text-slate-400">Business Impact:</span>
                   <span className="block text-xs font-bold text-slate-800 dark:text-white">{s.benefits}</span>
@@ -79,3 +79,4 @@ export default function Services() {
     </div>
   );
 }
+

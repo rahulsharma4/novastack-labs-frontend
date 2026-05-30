@@ -17,7 +17,7 @@ export default function NotFound() {
 
         <h1 className="text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight">404</h1>
 
-        <p className="text-xs text-slate-550 dark:text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
           The requested system node could not be resolved. The page may have been moved, renamed, or temporarily offline.
         </p>
 
@@ -32,3 +32,4 @@ export default function NotFound() {
     </div>
   );
 }
+

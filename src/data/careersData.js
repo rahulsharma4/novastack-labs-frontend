@@ -91,3 +91,4 @@ export const benefitsData = [
     description: "Bi-annual profit sharing and equity grants linked directly to company growth and successful client deliveries."
   }
 ];
+

@@ -61,7 +61,7 @@ export default function Technologies() {
               className={`px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none ${
                 selectedCategory === c.id
                   ? 'bg-slate-900 dark:bg-emerald-500 text-white shadow-lg'
-                  : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-450 hover:bg-slate-200 dark:hover:bg-slate-800'
+                  : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
               }`}
             >
               {c.name}
@@ -76,15 +76,15 @@ export default function Technologies() {
           {filteredTech.map((tech) => (
             <div
               key={tech.name}
-              className="p-5 border border-slate-200 dark:border-slate-850 rounded-2xl bg-slate-50/20 dark:bg-slate-900/20 hover:border-emerald-500/40 transition-colors flex flex-col justify-between"
+              className="p-5 border border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/20 dark:bg-slate-900/20 hover:border-emerald-500/40 transition-colors flex flex-col justify-between"
             >
               <div>
                 <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">{tech.category}</span>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white mt-1 mb-2 uppercase tracking-wide">{tech.name}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-450 leading-relaxed mb-4">{tech.desc}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{tech.desc}</p>
               </div>
-              <div className="pt-3 border-t border-slate-150 dark:border-slate-850">
-                <span className="block text-[8px] uppercase tracking-wider text-slate-450 dark:text-slate-550">Core Benefit:</span>
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800">
+                <span className="block text-[8px] uppercase tracking-wider text-slate-400 dark:text-slate-500">Core Benefit:</span>
                 <span className="block text-xs font-semibold text-slate-800 dark:text-emerald-400 mt-0.5">{tech.benefits}</span>
               </div>
             </div>
@@ -99,19 +99,19 @@ export default function Technologies() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center text-xs">
-            <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl">
+            <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl">
               <span className="block font-bold text-emerald-400 text-[10px] uppercase tracking-wider mb-1">User Client</span>
               <p className="text-[10px] text-slate-500">Next.js App Router static pages rendered via Edge CDN.</p>
             </div>
-            <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl">
+            <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl">
               <span className="block font-bold text-indigo-400 text-[10px] uppercase tracking-wider mb-1">Reverse Proxy</span>
               <p className="text-[10px] text-slate-500">Nginx SSL termination, rate-limiting & reverse routing.</p>
             </div>
-            <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl">
+            <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl">
               <span className="block font-bold text-emerald-400 text-[10px] uppercase tracking-wider mb-1">API Backend</span>
               <p className="text-[10px] text-slate-500">Node/Express apps clustered and managed via PM2.</p>
             </div>
-            <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl">
+            <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl">
               <span className="block font-bold text-indigo-400 text-[10px] uppercase tracking-wider mb-1">Storage Layer</span>
               <p className="text-[10px] text-slate-500">PostgreSQL indices or replica sets in MongoDB Atlas.</p>
             </div>
@@ -122,3 +122,4 @@ export default function Technologies() {
     </div>
   );
 }
+

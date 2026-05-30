@@ -65,7 +65,7 @@ export default function Pricing() {
               className={`p-6 border rounded-3xl bg-slate-50/20 dark:bg-slate-900/20 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 ${
                 idx === 1
                   ? 'border-indigo-500/80 shadow-indigo-500/10 shadow-lg dark:border-emerald-500/80 dark:shadow-emerald-500/5'
-                  : 'border-slate-200 dark:border-slate-850'
+                  : 'border-slate-200 dark:border-slate-800'
               }`}
             >
               <div>
@@ -81,7 +81,7 @@ export default function Pricing() {
                   <span className="text-[10px] text-slate-400 font-medium ml-1">/ project start</span>
                 </div>
 
-                <p className="text-xs text-slate-500 dark:text-slate-450 leading-relaxed mb-6 border-b border-slate-100 dark:border-slate-850 pb-4">
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
                   {pkg.desc}
                 </p>
 
@@ -89,7 +89,7 @@ export default function Pricing() {
                   {pkg.features.map((f) => (
                     <div key={f} className="flex gap-2">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span className="text-[11px] text-slate-755 dark:text-slate-350">{f}</span>
+                      <span className="text-[11px] text-slate-755 dark:text-slate-400">{f}</span>
                     </div>
                   ))}
                 </div>
@@ -101,7 +101,7 @@ export default function Pricing() {
                   className={`w-full py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 focus:outline-none ${
                     idx === 1
                       ? 'bg-gradient-to-r from-indigo-500 to-emerald-500 text-white'
-                      : 'bg-slate-905 dark:bg-slate-800 text-white dark:hover:bg-slate-700 hover:bg-slate-800'
+                      : 'bg-slate-900 dark:bg-slate-800 text-white dark:hover:bg-slate-700 hover:bg-slate-800'
                   }`}
                 >
                   Request Quote
@@ -132,7 +132,7 @@ export default function Pricing() {
             ) : (
               <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-wider mb-1.5">Name</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Name</label>
                   <input
                     type="text"
                     required
@@ -169,7 +169,7 @@ export default function Pricing() {
                   <select
                     value={formData.budget}
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-202 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                   >
                     <option value="$10,000 - $25,000">$10,000 - $25,000</option>
                     <option value="$25,000 - $50,000">$25,000 - $50,000</option>
@@ -192,3 +192,4 @@ export default function Pricing() {
     </div>
   );
 }
+

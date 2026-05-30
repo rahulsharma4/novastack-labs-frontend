@@ -275,3 +275,4 @@ export const blogData = [
     readTime: "5 min read"
   }
 ];
+

@@ -66,7 +66,7 @@ export default function Home() {
             </a>
             <a
               href="/portfolio"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider border border-slate-200 hover:border-slate-350 dark:border-slate-800 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all duration-200"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider border border-slate-200 hover:border-slate-400 dark:border-slate-800 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all duration-200"
             >
               View Work
             </a>
@@ -218,7 +218,7 @@ export default function Home() {
       <section className="relative z-10 max-w-4xl mx-auto px-6 py-20">
         <div className="text-center mb-12">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">Frequently Asked Questions</h2>
-          <p className="text-xs text-slate-550 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
             Have questions about project cycles or intellectual properties? Here are our standard responses.
           </p>
         </div>
@@ -237,7 +237,7 @@ export default function Home() {
                 <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${activeFaq === idx ? 'rotate-180' : ''}`} />
               </button>
               {activeFaq === idx && (
-                <div className="px-5 pb-5 text-xs text-slate-550 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-3">
+                <div className="px-5 pb-5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-3">
                   {faq.a}
                 </div>
               )}
@@ -266,3 +266,4 @@ export default function Home() {
     </div>
   );
 }
+

@@ -154,7 +154,7 @@ export default function Navbar() {
                     key={link.name}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm font-semibold uppercase tracking-wider text-slate-700 hover:text-emerald-500 dark:text-slate-350 dark:hover:text-emerald-400 transition-colors"
+                    className="text-sm font-semibold uppercase tracking-wider text-slate-700 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors"
                   >
                     {link.name}
                   </a>
@@ -180,3 +180,4 @@ export default function Navbar() {
     </>
   );
 }
+
