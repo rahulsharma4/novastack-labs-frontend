@@ -616,8 +616,8 @@ export default function Admin() {
 
       {/* 3. Create Blog Popup Modal */}
       {createModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-          <div className="w-full max-w-3xl bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xl flex flex-col my-8 max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+          <div className="w-full max-w-3xl bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col my-8">
             
             {/* Modal Header */}
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
@@ -634,7 +634,7 @@ export default function Admin() {
             </div>
 
             {/* Modal Scrollable Body */}
-            <form onSubmit={handlePublishBlog} className="p-6 overflow-y-auto flex flex-col gap-5 text-xs">
+            <form onSubmit={handlePublishBlog} className="p-6 flex flex-col gap-5 text-xs">
               
               {/* Row 1: Title & Status */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
