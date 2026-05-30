@@ -782,7 +782,6 @@ export default function Admin() {
                   )}
                 </div>
               </div>
-            </div>
 
               {/* Row 6: Real Image Upload File Picker */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
