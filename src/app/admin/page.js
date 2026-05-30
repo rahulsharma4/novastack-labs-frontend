@@ -368,9 +368,9 @@ export default function Admin() {
       
       {/* 1. Cleaned Sidebar Nav (Only active functional links remaining) */}
       <aside className="w-full md:w-60 bg-slate-900 text-slate-400 flex flex-col shrink-0">
-        <div className="p-6 border-b border-slate-800 flex items-center gap-2">
+        <div className="p-6 border-b border-slate-800 flex items-center gap-3">
           <div className="h-8 w-8 rounded-xl bg-gradient-to-r from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-extrabold text-sm">NS</div>
-          <span className="font-extrabold text-sm text-white tracking-wide uppercase">W3 SpeedX</span>
+          <span className="font-extrabold text-sm text-white tracking-wide uppercase">NovaStack<span className="text-emerald-400">Labs</span></span>
         </div>
         
         <nav className="flex-1 p-4 flex flex-col gap-1.5 text-xs font-medium">
@@ -412,11 +412,11 @@ export default function Admin() {
           </div>
           <div className="flex items-center gap-2">
             <div className="text-right">
-              <span className="block text-xs font-bold text-slate-800">Admin Panel</span>
-              <span className="block text-[10px] text-slate-400">admin@novastack.com</span>
+              <span className="block text-xs font-bold text-slate-800">NovaStack Admin</span>
+              <span className="block text-[10px] text-slate-400">admin@novastacklabs.com</span>
             </div>
-            <div className="h-8 w-8 rounded-full bg-slate-300 overflow-hidden border border-slate-200">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="avatar" className="h-full w-full object-cover" />
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-extrabold text-[10px] border border-slate-200">
+              NS
             </div>
           </div>
         </div>
