@@ -29,6 +29,26 @@ export default function Admin() {
   // Modal Control
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editorTab, setEditorTab] = useState('visual');
+  const [editingBlogId, setEditingBlogId] = useState(null);
+
+  const handleEditBlog = (blog) => {
+    setNewBlog({
+      title: blog.title || '',
+      slug: blog.slug || '',
+      status: blog.status || 'Published',
+      category: blog.category || 'Web Development',
+      summary: blog.summary || '',
+      content: blog.content || '',
+      cssContent: blog.cssContent || '',
+      imageUrl: blog.imageUrl || '',
+      author: blog.author || 'Elena Rostova',
+      role: blog.role || 'Lead Frontend Architect',
+      tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : (blog.tags || 'webdev, react, tailwind'),
+      readTime: blog.readTime || '5 min read'
+    });
+    setEditingBlogId(blog._id);
+    setCreateModalOpen(true);
+  };
 
   // Categories list
   const categoriesList = [
@@ -200,8 +220,10 @@ export default function Admin() {
     setSubmitting(true);
     try {
       const tagsArray = newBlog.tags.split(',').map(t => t.trim()).filter(Boolean);
-      const res = await fetch(`${API_URL}/blogs`, {
-        method: 'POST',
+      const url = editingBlogId ? `${API_URL}/blogs/${editingBlogId}` : `${API_URL}/blogs`;
+      const method = editingBlogId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'x-admin-token': token
@@ -227,11 +249,12 @@ export default function Admin() {
           tags: 'webdev, react, tailwind',
           readTime: '5 min read'
         });
+        setEditingBlogId(null);
         setCreateModalOpen(false);
         fetchBlogs();
       } else {
         const errorData = await res.json();
-        alert("Failed to create blog: " + errorData.message);
+        alert("Failed to save blog: " + errorData.message);
       }
     } catch (err) {
       console.error(err);
@@ -476,7 +499,24 @@ export default function Admin() {
               <div className="flex items-center gap-3">
                 <span className="text-xs text-slate-400 font-medium">{filteredBlogs.length} total</span>
                 <button 
-                  onClick={() => setCreateModalOpen(true)}
+                  onClick={() => {
+                    setNewBlog({
+                      title: '',
+                      slug: '',
+                      status: 'Published',
+                      category: 'Web Development',
+                      summary: '',
+                      content: '',
+                      cssContent: '',
+                      imageUrl: '',
+                      author: 'Elena Rostova',
+                      role: 'Lead Frontend Architect',
+                      tags: 'webdev, react, tailwind',
+                      readTime: '5 min read'
+                    });
+                    setEditingBlogId(null);
+                    setCreateModalOpen(true);
+                  }}
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 shadow-md"
                 >
                   <Plus className="h-4 w-4" /> Create
@@ -552,9 +592,12 @@ export default function Admin() {
                         </td>
                         <td className="p-4 text-slate-400 font-mono">{b.date}</td>
                         <td className="p-4 text-right flex items-center justify-end gap-1.5">
-                          <a href="/blog" className="p-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-500 flex items-center gap-1 font-bold tracking-wider text-[9px] uppercase">
+                          <a href={`/blog/${b.slug}`} className="p-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-500 flex items-center gap-1 font-bold tracking-wider text-[9px] uppercase">
                             <Eye className="h-3.5 w-3.5" /> View
                           </a>
+                          <button onClick={() => handleEditBlog(b)} className="p-1.5 border border-indigo-200 hover:bg-indigo-50 rounded-lg text-indigo-500 flex items-center gap-1 font-bold tracking-wider text-[9px] uppercase">
+                            <Edit className="h-3.5 w-3.5" /> Edit
+                          </button>
                           <button onClick={() => handleDeleteBlog(b._id)} className="p-1.5 border border-rose-200 hover:bg-rose-50 rounded-lg text-rose-500 flex items-center gap-1 font-bold tracking-wider text-[9px] uppercase">
                             <Trash2 className="h-3.5 w-3.5" /> Delete
                           </button>
