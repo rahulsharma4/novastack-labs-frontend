@@ -1,35 +1,64 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ShieldAlert, LogIn, Mail, FolderHeart, FileText, Trash2, Send, Plus, Briefcase, BookOpen, Layers } from 'lucide-react';
+import { 
+  ShieldAlert, LogIn, Mail, FolderHeart, FileText, Trash2, Send, 
+  Plus, Briefcase, BookOpen, Layers, Search, Eye, Edit, X, Image, 
+  Settings, Users, Globe, CreditCard, ShoppingBag, LogOut, CheckSquare, Square
+} from 'lucide-react';
 
 export default function Admin() {
   const [passcode, setPasscode] = useState('');
   const [token, setToken] = useState(null);
   const [authError, setAuthError] = useState('');
-  const [activeTab, setActiveTab] = useState('contacts');
+  const [activeTab, setActiveTab] = useState('blogs');
   const [submitting, setSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Any');
 
-  // States for lists
+  // Lists
   const [contacts, setContacts] = useState([]);
   const [applications, setApplications] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Modal Control
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editorTab, setEditorTab] = useState('visual');
+
+  // Categories list
+  const categoriesList = [
+    "Web Development",
+    "Databases",
+    "DevOps",
+    "UI/UX Design",
+    "Healthcare Technology",
+    "SEO Optimization",
+    "Mobile Development",
+    "AI Integration",
+    "Web Monitoring",
+    "test",
+    "test 1"
+  ];
+
   // New Blog form state
   const [newBlog, setNewBlog] = useState({
     title: '',
+    slug: '',
+    status: 'Published',
     category: 'Web Development',
+    summary: '',
+    content: '',
+    cssContent: '',
+    imageUrl: '',
     author: 'Elena Rostova',
     role: 'Lead Frontend Architect',
-    summary: '',
-    tags: '',
+    tags: 'webdev, react, tailwind',
     readTime: '5 min read'
   });
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-  // Check if token exists in session
   useEffect(() => {
     const savedToken = sessionStorage.getItem('adminToken');
     if (savedToken) {
@@ -37,7 +66,6 @@ export default function Admin() {
     }
   }, []);
 
-  // Fetch data on tab switch
   useEffect(() => {
     if (!token) return;
     if (activeTab === 'contacts') fetchContacts();
@@ -63,7 +91,7 @@ export default function Admin() {
         setAuthError('Invalid passcode. Access Denied.');
       }
     } catch (err) {
-      setAuthError('Could not verify. Ensure backend server is running on port 5000.');
+      setAuthError('Could not verify. Ensure backend server is running.');
     } finally {
       setSubmitting(false);
     }
@@ -124,12 +152,32 @@ export default function Admin() {
     }
   };
 
+  const handleTitleChange = (val) => {
+    const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    setNewBlog({ ...newBlog, title: val, slug });
+  };
+
+  const handleMockUpload = () => {
+    const images = [
+      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800",
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800",
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800",
+      "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800",
+      "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800"
+    ];
+    const randomImg = images[Math.floor(Math.random() * images.length)];
+    setNewBlog({ ...newBlog, imageUrl: randomImg });
+    alert("Mock image linked successfully!");
+  };
+
   const handlePublishBlog = async (e) => {
     e.preventDefault();
-    if (!newBlog.title || !newBlog.summary) return;
+    if (!newBlog.title || !newBlog.summary) {
+      alert("Please fill in Title and Summary.");
+      return;
+    }
     setSubmitting(true);
     try {
-      // Split tags comma
       const tagsArray = newBlog.tags.split(',').map(t => t.trim()).filter(Boolean);
       const res = await fetch(`${API_URL}/blogs`, {
         method: 'POST',
@@ -146,17 +194,27 @@ export default function Admin() {
       if (res.ok) {
         setNewBlog({
           title: '',
+          slug: '',
+          status: 'Published',
           category: 'Web Development',
+          summary: '',
+          content: '',
+          cssContent: '',
+          imageUrl: '',
           author: 'Elena Rostova',
           role: 'Lead Frontend Architect',
-          summary: '',
-          tags: '',
+          tags: 'webdev, react, tailwind',
           readTime: '5 min read'
         });
+        setCreateModalOpen(false);
         fetchBlogs();
+      } else {
+        const errorData = await res.json();
+        alert("Failed to create blog: " + errorData.message);
       }
     } catch (err) {
       console.error(err);
+      alert("An error occurred while publishing.");
     } finally {
       setSubmitting(false);
     }
@@ -177,7 +235,15 @@ export default function Admin() {
     }
   };
 
-  // 1. Render Login Screen
+  // Filter Blogs
+  const filteredBlogs = blogs.filter((b) => {
+    const matchesSearch = b.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          b.slug?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'Any' || b.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Login Screen Render
   if (!token) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 py-20 px-6">
@@ -222,208 +288,479 @@ export default function Admin() {
     );
   }
 
-  // 2. Render Main Dashboard
+  // Dashboard Layout with Sidebar
   return (
-    <div className="flex-1 bg-slate-50 min-h-screen py-10 px-6 relative">
-      <div className="max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="flex-1 min-h-screen bg-slate-50 flex flex-col md:flex-row text-slate-800">
+      
+      {/* 1. Sidebar Nav */}
+      <aside className="w-full md:w-60 bg-slate-900 text-slate-400 flex flex-col shrink-0">
+        <div className="p-6 border-b border-slate-800 flex items-center gap-2">
+          <div className="h-8 w-8 rounded-xl bg-gradient-to-r from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-extrabold text-sm">NS</div>
+          <span className="font-extrabold text-sm text-white tracking-wide uppercase">W3 SpeedX</span>
+        </div>
         
-        {/* Dashboard Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+        <nav className="flex-1 p-4 flex flex-col gap-1.5 text-xs font-medium">
+          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
+            <Layers className="h-4 w-4" /> Dashboard
+          </button>
+          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
+            <Users className="h-4 w-4" /> Users
+          </button>
+          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
+            <Globe className="h-4 w-4" /> Sites
+          </button>
+          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
+            <CreditCard className="h-4 w-4" /> Plans
+          </button>
+          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
+            <ShoppingBag className="h-4 w-4" /> Addons
+          </button>
+          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
+            <Layers className="h-4 w-4" /> Subscriptions
+          </button>
+          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
+            <CreditCard className="h-4 w-4" /> Transactions
+          </button>
+          
+          <div className="h-px bg-slate-800 my-4"></div>
+
+          <button onClick={() => setActiveTab('blogs')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'blogs' ? 'bg-indigo-650 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}>
+            <BookOpen className="h-4 w-4" /> Website Blogs
+          </button>
+          <button onClick={() => setActiveTab('contacts')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'contacts' ? 'bg-indigo-650 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}>
+            <Mail className="h-4 w-4" /> Contact Inbox ({contacts.length})
+          </button>
+          <button onClick={() => setActiveTab('applications')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'applications' ? 'bg-indigo-650 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}>
+            <Briefcase className="h-4 w-4" /> Careers Applications ({applications.length})
+          </button>
+        </nav>
+
+        <div className="p-4 border-t border-slate-800">
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-rose-400 transition-all text-xs font-semibold text-left">
+            <LogOut className="h-4 w-4 text-rose-500" /> Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* 2. Main content area */}
+      <main className="flex-1 p-6 md:p-8 flex flex-col gap-6 max-w-7xl">
+        
+        {/* Welcome Top Banner */}
+        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">NovaStack Admin Console</h1>
-            <p className="text-xs text-slate-500">Dynamic control panel for logs and client inquiries.</p>
+            <h2 className="text-lg font-bold text-slate-800">Welcome Admin!</h2>
+            <p className="text-xs text-slate-500">Here's what's happening with your site today.</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-colors"
-          >
-            Lock Dashboard
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="text-right">
+              <span className="block text-xs font-bold text-slate-800">Admin Panel</span>
+              <span className="block text-[10px] text-slate-400">admin@novastack.com</span>
+            </div>
+            <div className="h-8 w-8 rounded-full bg-slate-300 overflow-hidden border border-slate-200">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="avatar" className="h-full w-full object-cover" />
+            </div>
+          </div>
         </div>
 
-        {/* Dashboard Menu Tabs */}
-        <div className="flex border-b border-slate-200 gap-4">
-          <button
-            onClick={() => setActiveTab('contacts')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all ${
-              activeTab === 'contacts' ? 'border-indigo-500 text-slate-900' : 'border-transparent text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            Contacts Inquiries ({contacts.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('applications')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all ${
-              activeTab === 'applications' ? 'border-indigo-500 text-slate-900' : 'border-transparent text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            Applications ({applications.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('blogs')}
-            className={`pb-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all ${
-              activeTab === 'blogs' ? 'border-indigo-500 text-slate-900' : 'border-transparent text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            Manage Blog ({blogs.length})
-          </button>
-        </div>
+        {/* Dynamic Inner Tab View */}
+        {activeTab === 'contacts' && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Contact Inquiries Inbox</h3>
+            {contacts.length === 0 ? (
+              <div className="text-center py-20 text-slate-400 text-xs">No customer inquiries logged yet.</div>
+            ) : (
+              contacts.map((c) => (
+                <div key={c._id} className="p-6 bg-white border border-slate-200 rounded-2xl flex flex-col gap-2 shadow-sm">
+                  <div className="flex justify-between items-start border-b pb-2">
+                    <div>
+                      <h4 className="font-bold text-slate-800 text-xs">{c.name}</h4>
+                      <span className="text-[10px] text-slate-400">{c.email}</span>
+                    </div>
+                    <span className="text-[9px] font-mono text-slate-400">{new Date(c.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100 mt-2">
+                    <strong>Subject: {c.subject}</strong><br />
+                    {c.message}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        )}
 
-        {/* Dynamic content rendering */}
-        <div className="min-h-[400px]">
-          {loading ? (
-            <div className="py-20 text-center text-xs text-slate-400">Loading database records...</div>
-          ) : activeTab === 'contacts' ? (
-            /* Tab 1: Inquiries */
-            <div className="grid grid-cols-1 gap-4">
-              {contacts.length === 0 ? (
-                <div className="text-center py-20 text-slate-400 text-xs">No client inquiries logged yet.</div>
-              ) : (
-                contacts.map((c) => (
-                  <div key={c._id} className="p-6 bg-white border border-slate-200 rounded-3xl flex flex-col gap-3 shadow-sm">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                      <div>
-                        <h4 className="font-bold text-slate-800 text-xs">{c.name}</h4>
-                        <span className="text-[10px] text-slate-500">{c.email}</span>
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-mono">{new Date(c.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    <div>
-                      <span className="block text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1">Subject</span>
-                      <h5 className="font-semibold text-slate-800 text-xs mb-2">{c.subject}</h5>
-                      <span className="block text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1">Message</span>
-                      <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-4 border border-slate-100 rounded-2xl">{c.message}</p>
-                    </div>
+        {activeTab === 'applications' && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Careers Candidate Logs</h3>
+            {applications.length === 0 ? (
+              <div className="text-center py-20 text-slate-400 text-xs">No candidate applications logged yet.</div>
+            ) : (
+              applications.map((app) => (
+                <div key={app._id} className="p-5 bg-white border border-slate-200 rounded-2xl flex justify-between items-center shadow-sm">
+                  <div>
+                    <h4 className="font-bold text-slate-800 text-xs">{app.name} ({app.jobTitle})</h4>
+                    <span className="text-[10px] text-slate-400">{app.email}</span>
                   </div>
-                ))
-              )}
+                  <a href={app.resume} target="_blank" rel="noreferrer" className="px-4 py-2 border text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-colors">
+                    View Resume
+                  </a>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {activeTab === 'blogs' && (
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col gap-6">
+            
+            {/* Header with Title and Create Button */}
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Website blogs</span>
+                <h3 className="text-md font-extrabold text-slate-900 mt-0.5">Blog content</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Manage blog posts for the public website.</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-slate-400 font-medium">{filteredBlogs.length} total</span>
+                <button 
+                  onClick={() => setCreateModalOpen(true)}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 shadow-md"
+                >
+                  <Plus className="h-4 w-4" /> Create
+                </button>
+              </div>
             </div>
-          ) : activeTab === 'applications' ? (
-            /* Tab 2: Job Applications */
-            <div className="grid grid-cols-1 gap-4">
-              {applications.length === 0 ? (
-                <div className="text-center py-20 text-slate-400 text-xs">No candidate applications logged yet.</div>
-              ) : (
-                applications.map((app) => (
-                  <div key={app._id} className="p-6 bg-white border border-slate-200 rounded-3xl flex items-center justify-between gap-6 shadow-sm">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h4 className="font-bold text-slate-800 text-xs">{app.name}</h4>
-                        <span className="px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">{app.jobTitle}</span>
-                      </div>
-                      <span className="text-[10px] text-slate-400">{app.email}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <a
-                        href={app.resume}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="px-4 py-2 border border-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-colors"
-                      >
-                        View Resume
-                      </a>
-                    </div>
-                  </div>
-                ))
-              )}
+
+            {/* Filter Row */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div>
+                <label className="block text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Search</label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Title, slug..."
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Status</label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500"
+                >
+                  <option value="Any">Any</option>
+                  <option value="Published">Published</option>
+                  <option value="Draft">Draft</option>
+                </select>
+              </div>
+              <button 
+                onClick={fetchBlogs}
+                className="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
+              >
+                Apply Filters
+              </button>
             </div>
-          ) : (
-            /* Tab 3: Blog Editor */
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            {/* Table list */}
+            <div className="overflow-x-auto border border-slate-200 rounded-2xl">
+              <table className="w-full border-collapse text-left text-xs">
+                <thead className="bg-slate-900 text-white text-[9px] uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4 font-bold">ID</th>
+                    <th className="p-4 font-bold">Title</th>
+                    <th className="p-4 font-bold">Slug</th>
+                    <th className="p-4 font-bold">Status</th>
+                    <th className="p-4 font-bold">Updated</th>
+                    <th className="p-4 font-bold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredBlogs.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="p-8 text-center text-slate-400">No blog posts found.</td>
+                    </tr>
+                  ) : (
+                    filteredBlogs.map((b, idx) => (
+                      <tr key={b._id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="p-4 font-mono text-slate-400 font-bold">{idx + 1}</td>
+                        <td className="p-4 font-bold text-slate-800 max-w-[200px] truncate">{b.title}</td>
+                        <td className="p-4 font-mono text-slate-500 max-w-[150px] truncate">{b.slug || 'N/A'}</td>
+                        <td className="p-4">
+                          <span className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider ${
+                            b.status === 'Draft' ? 'bg-slate-100 text-slate-500 border border-slate-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                          }`}>
+                            {b.status || 'Published'}
+                          </span>
+                        </td>
+                        <td className="p-4 text-slate-400 font-mono">{b.date}</td>
+                        <td className="p-4 text-right flex items-center justify-end gap-1.5">
+                          <a href="/blog" className="p-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-500 flex items-center gap-1 font-bold tracking-wider text-[9px] uppercase">
+                            <Eye className="h-3.5 w-3.5" /> View
+                          </a>
+                          <button onClick={() => handleDeleteBlog(b._id)} className="p-1.5 border border-rose-200 hover:bg-rose-50 rounded-lg text-rose-500 flex items-center gap-1 font-bold tracking-wider text-[9px] uppercase">
+                            <Trash2 className="h-3.5 w-3.5" /> Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        )}
+
+      </main>
+
+      {/* 3. Create Blog Popup Modal */}
+      {createModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+          <div className="w-full max-w-3xl bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xl flex flex-col my-8 max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <span className="text-[9px] font-bold text-indigo-500 uppercase tracking-widest">Website Editor</span>
+                <h3 className="text-md font-extrabold text-slate-900">Create blog</h3>
+              </div>
+              <button 
+                onClick={() => setCreateModalOpen(false)}
+                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <form onSubmit={handlePublishBlog} className="p-6 overflow-y-auto flex flex-col gap-5 text-xs">
               
-              {/* Form Block */}
-              <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm h-fit">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4 flex items-center gap-1.5"><Plus className="h-4 w-4 text-emerald-500" /> Publish Article</h3>
-                <form onSubmit={handlePublishBlog} className="flex flex-col gap-4">
-                  <div>
-                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Article Title</label>
-                    <input
-                      type="text"
-                      required
-                      value={newBlog.title}
-                      onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
-                      placeholder="e.g. Scaling Express Clusters"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[9px] font-bold text-slate-455 uppercase tracking-widest mb-1.5">Category</label>
-                    <select
-                      value={newBlog.category}
-                      onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500"
-                    >
-                      <option value="Web Development">Web Development</option>
-                      <option value="Databases">Databases</option>
-                      <option value="DevOps">DevOps</option>
-                      <option value="UI/UX Design">UI/UX Design</option>
-                      <option value="Healthcare Technology">Healthcare Technology</option>
-                      <option value="SEO Optimization">SEO Optimization</option>
-                      <option value="Mobile Development">Mobile Development</option>
-                      <option value="AI Integration">AI Integration</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[9px] font-bold text-slate-455 uppercase tracking-widest mb-1.5">Summary</label>
-                    <textarea
-                      required
-                      rows={3}
-                      value={newBlog.summary}
-                      onChange={(e) => setNewBlog({ ...newBlog, summary: e.target.value })}
-                      placeholder="Short teaser description..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 resize-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[9px] font-bold text-slate-455 uppercase tracking-widest mb-1.5">Tags (Comma Separated)</label>
-                    <input
-                      type="text"
-                      value={newBlog.tags}
-                      onChange={(e) => setNewBlog({ ...newBlog, tags: e.target.value })}
-                      placeholder="e.g. Node, Cluster, API"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="py-3 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors"
+              {/* Row 1: Title & Status */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newBlog.title}
+                    onChange={(e) => handleTitleChange(e.target.value)}
+                    placeholder="My first post"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Status</label>
+                  <select
+                    value={newBlog.status}
+                    onChange={(e) => setNewBlog({ ...newBlog, status: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-indigo-500"
                   >
-                    Publish Post
-                  </button>
-                </form>
+                    <option value="Published">Published</option>
+                    <option value="Draft">Draft</option>
+                  </select>
+                </div>
               </div>
 
-              {/* List Block */}
-              <div className="lg:col-span-2 flex flex-col gap-4">
-                {blogs.length === 0 ? (
-                  <div className="text-center py-20 text-slate-400 text-xs">No blogs found in database.</div>
-                ) : (
-                  blogs.map((b) => (
-                    <div key={b._id} className="p-4 bg-white border border-slate-200 rounded-2xl flex items-center justify-between gap-4 shadow-sm">
-                      <div className="min-w-0">
-                        <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">{b.category}</span>
-                        <h4 className="font-bold text-slate-800 text-xs truncate mt-0.5">{b.title}</h4>
-                        <span className="block text-[9px] text-slate-400 mt-1">{b.date} &bull; {b.author}</span>
-                      </div>
+              {/* Row 2: Slug */}
+              <div>
+                <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Slug *</label>
+                <input
+                  type="text"
+                  required
+                  value={newBlog.slug}
+                  onChange={(e) => setNewBlog({ ...newBlog, slug: e.target.value })}
+                  placeholder="my-first-post"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 font-mono"
+                />
+                <span className="text-[9px] text-slate-400 mt-1 block">Allowed: a-z, 0-9, and single -. Example: my-first-post</span>
+              </div>
+
+              {/* Row 3: Excerpt */}
+              <div>
+                <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Excerpt (Teaser Summary) *</label>
+                <textarea
+                  required
+                  rows={2}
+                  value={newBlog.summary}
+                  onChange={(e) => setNewBlog({ ...newBlog, summary: e.target.value })}
+                  placeholder="Short teaser description of the blog post..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 resize-none"
+                />
+              </div>
+
+              {/* Row 4: Categories Checkboxes */}
+              <div>
+                <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">Categories Selection</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border border-slate-150 rounded-2xl bg-slate-50/50">
+                  {categoriesList.map((cat) => {
+                    const isSelected = newBlog.category === cat;
+                    return (
                       <button
-                        onClick={() => handleDeleteBlog(b._id)}
-                        className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
-                        title="Delete article"
+                        key={cat}
+                        type="button"
+                        onClick={() => setNewBlog({ ...newBlog, category: cat })}
+                        className="flex items-center gap-2 text-left focus:outline-none group text-slate-600 hover:text-slate-900"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        {isSelected ? (
+                          <CheckSquare className="h-4 w-4 text-indigo-600" />
+                        ) : (
+                          <Square className="h-4 w-4 text-slate-300 group-hover:text-slate-400" />
+                        )}
+                        <span className="text-[11px] font-medium leading-none">{cat}</span>
                       </button>
-                    </div>
-                  ))
-                )}
+                    );
+                  })}
+                </div>
               </div>
 
-            </div>
-          )}
-        </div>
+              {/* Row 5: Editor visual/html/css tabs */}
+              <div className="border border-slate-200 rounded-2xl overflow-hidden mt-2">
+                <div className="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center justify-between">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Body content editor</span>
+                  <div className="flex bg-slate-200/60 p-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
+                    {['visual', 'html', 'css'].map((tab) => (
+                      <button
+                        key={tab}
+                        type="button"
+                        onClick={() => setEditorTab(tab)}
+                        className={`px-3 py-1.5 rounded-md transition-colors ${
+                          editorTab === tab ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-800'
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-white">
+                  {editorTab === 'visual' && (
+                    <div className="flex flex-col gap-2">
+                      <div className="border border-slate-200/80 rounded-xl bg-slate-50 p-2 flex gap-1 items-center mb-1 text-[9px] font-bold text-slate-400">
+                        <span>Paragraph</span>
+                        <span>|</span>
+                        <span className="font-serif">B</span>
+                        <span className="italic">I</span>
+                        <span className="underline">U</span>
+                        <span className="line-through">S</span>
+                      </div>
+                      <textarea
+                        rows={6}
+                        value={newBlog.content}
+                        onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
+                        placeholder="Write dynamic content details here..."
+                        className="w-full border border-slate-100 rounded-xl p-3 text-xs focus:outline-none resize-none font-sans"
+                      />
+                    </div>
+                  )}
 
-      </div>
+                  {editorTab === 'html' && (
+                    <textarea
+                      rows={8}
+                      value={newBlog.content}
+                      onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
+                      placeholder="<!-- Enter HTML source code -->&#10;<div class='custom-blog-post'>&#10;  <h3>Dynamic Header</h3>&#10;</div>"
+                      className="w-full border border-slate-200 rounded-xl p-3 text-xs focus:outline-none font-mono resize-none bg-slate-950 text-emerald-400"
+                    />
+                  )}
+
+                  {editorTab === 'css' && (
+                    <textarea
+                      rows={8}
+                      value={newBlog.cssContent}
+                      onChange={(e) => setNewBlog({ ...newBlog, cssContent: e.target.value })}
+                      placeholder="/* Enter custom styles scoped to this article */&#10;.custom-blog-post h3 {&#10;  color: #6366f1;&#10;}"
+                      className="w-full border border-slate-200 rounded-xl p-3 text-xs focus:outline-none font-mono resize-none bg-slate-950 text-indigo-400"
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Row 6: Featured Image upload */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Featured Image URL</label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Image className="absolute left-3 top-2.5 h-4 w-4 text-slate-450" />
+                      <input
+                        type="text"
+                        value={newBlog.imageUrl}
+                        onChange={(e) => setNewBlog({ ...newBlog, imageUrl: e.target.value })}
+                        placeholder="https://unsplash.com/.../hero.jpg"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-indigo-500 font-mono"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleMockUpload}
+                      className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all shrink-0"
+                    >
+                      Upload
+                    </button>
+                    {newBlog.imageUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setNewBlog({ ...newBlog, imageUrl: '' })}
+                        className="px-3 border border-rose-200 hover:bg-rose-50 text-rose-500 rounded-xl shrink-0"
+                        title="Clear image"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Author Details</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      required
+                      value={newBlog.author}
+                      onChange={(e) => setNewBlog({ ...newBlog, author: e.target.value })}
+                      placeholder="Elena Rostova"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none"
+                    />
+                    <input
+                      type="text"
+                      required
+                      value={newBlog.readTime}
+                      onChange={(e) => setNewBlog({ ...newBlog, readTime: e.target.value })}
+                      placeholder="5 min read"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer Controls */}
+              <div className="flex justify-end gap-3 border-t border-slate-100 pt-5 mt-3">
+                <button
+                  type="button"
+                  onClick={() => setCreateModalOpen(false)}
+                  className="px-5 py-2.5 border border-slate-200 text-slate-500 text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-6 py-2.5 bg-indigo-650 hover:bg-indigo-700 text-white text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98]"
+                >
+                  {submitting ? 'Creating...' : 'Create'}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
-
