@@ -6,12 +6,14 @@ import Logo from './Logo';
 import SearchModal from './SearchModal';
 import { Search, Sun, Moon, Menu, X, ChevronDown, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const mainLinks = [
     { name: 'About', href: '/about' },
@@ -35,22 +37,33 @@ export default function Navbar() {
             <Logo />
           </a>
 
-          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-3 xl:gap-5">
-            {mainLinks.map((link) => (
-              <div
-                key={link.name}
-                className="relative"
-                onMouseEnter={() => link.hasDropdown && setMegaMenuOpen(true)}
-                onMouseLeave={() => link.hasDropdown && setMegaMenuOpen(false)}
-              >
-                <a
-                  href={link.href}
-                  className="flex items-center gap-1 text-[10px] xl:text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-emerald-500 transition-colors"
+            {mainLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
+              return (
+                <div
+                  key={link.name}
+                  className="relative"
+                  onMouseEnter={() => link.hasDropdown && setMegaMenuOpen(true)}
+                  onMouseLeave={() => link.hasDropdown && setMegaMenuOpen(false)}
                 >
-                  {link.name}
-                  {link.hasDropdown && <ChevronDown className="h-3 w-3" />}
-                </a>
+                  <a
+                    href={link.href}
+                    className={`flex items-center gap-1 text-[10px] xl:text-xs font-bold uppercase tracking-wider transition-colors py-2 ${
+                      isActive ? 'text-indigo-600' : 'text-slate-600 hover:text-indigo-500'
+                    }`}
+                  >
+                    {link.name}
+                    {link.hasDropdown && <ChevronDown className="h-3 w-3" />}
+                  </a>
+
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      className="absolute -bottom-[21px] left-0 right-0 h-[3px] bg-gradient-to-r from-indigo-500 to-emerald-500 rounded-full"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
 
                 {/* Mega Menu Dropdown */}
                 {link.hasDropdown && megaMenuOpen && (
@@ -90,7 +103,8 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
           </nav>
 
           {/* Desktop Right CTAs */}
@@ -164,17 +178,22 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  {mainLinks.map((link) => (
-                    <a
-                      key={link.name}
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-indigo-500 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-emerald-400 dark:hover:bg-slate-800/40 rounded-xl transition-all duration-200 flex items-center justify-between group"
-                    >
-                      <span>{link.name}</span>
-                      <span className="h-1.5 w-1.5 rounded-full bg-transparent group-hover:bg-indigo-500 dark:group-hover:bg-emerald-400 transition-colors"></span>
-                    </a>
-                  ))}
+                  {mainLinks.map((link) => {
+                    const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
+                    return (
+                      <a
+                        key={link.name}
+                        href={link.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`px-3 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 flex items-center justify-between group ${
+                          isActive ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-700 hover:text-indigo-500 hover:bg-slate-50 dark:text-slate-350 dark:hover:text-emerald-450 dark:hover:bg-slate-800/40'
+                        }`}
+                      >
+                        <span>{link.name}</span>
+                        <span className={`h-1.5 w-1.5 rounded-full transition-colors ${isActive ? 'bg-indigo-500' : 'bg-transparent group-hover:bg-indigo-500 dark:group-hover:bg-emerald-400'}`}></span>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
 
