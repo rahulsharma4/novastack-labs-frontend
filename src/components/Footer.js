@@ -8,11 +8,27 @@ export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email) return;
-    setSubscribed(true);
-    setEmail('');
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      await fetch(`${apiBase}/contacts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Newsletter Subscriber',
+          email: email,
+          subject: 'Newsletter Subscription Signup',
+          message: `User signed up for insights newsletter using email: ${email}`
+        })
+      });
+      setSubscribed(true);
+      setEmail('');
+    } catch (err) {
+      console.error('Failed to submit subscription:', err);
+      setSubscribed(true);
+    }
   };
 
   const footerLinks = {

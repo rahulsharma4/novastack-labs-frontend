@@ -66,12 +66,13 @@ export default function Admin() {
     }
   }, []);
 
+  // Fetch all listings when token is verified so sidebar counts are populated instantly
   useEffect(() => {
     if (!token) return;
-    if (activeTab === 'contacts') fetchContacts();
-    if (activeTab === 'applications') fetchApplications();
-    if (activeTab === 'blogs') fetchBlogs();
-  }, [token, activeTab]);
+    fetchContacts();
+    fetchApplications();
+    fetchBlogs();
+  }, [token]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -157,17 +158,15 @@ export default function Admin() {
     setNewBlog({ ...newBlog, title: val, slug });
   };
 
-  const handleMockUpload = () => {
-    const images = [
-      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800",
-      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800",
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800",
-      "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800",
-      "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800"
-    ];
-    const randomImg = images[Math.floor(Math.random() * images.length)];
-    setNewBlog({ ...newBlog, imageUrl: randomImg });
-    alert("Mock image linked successfully!");
+  // Convert selected file to base64 string
+  const handleImageFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setNewBlog({ ...newBlog, imageUrl: reader.result });
+    };
+    reader.readAsDataURL(file);
   };
 
   const handlePublishBlog = async (e) => {
@@ -235,6 +234,36 @@ export default function Admin() {
     }
   };
 
+  const handleDeleteContact = async (id) => {
+    if (!confirm('Are you sure you want to delete this contact inquiry?')) return;
+    try {
+      const res = await fetch(`${API_URL}/contacts/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-token': token }
+      });
+      if (res.ok) {
+        setContacts(contacts.filter(c => c._id !== id));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteApplication = async (id) => {
+    if (!confirm('Are you sure you want to delete this candidate application log?')) return;
+    try {
+      const res = await fetch(`${API_URL}/applications/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-token': token }
+      });
+      if (res.ok) {
+        setApplications(applications.filter(a => a._id !== id));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Filter Blogs
   const filteredBlogs = blogs.filter((b) => {
     const matchesSearch = b.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -288,11 +317,11 @@ export default function Admin() {
     );
   }
 
-  // Dashboard Layout with Sidebar
+  // Dashboard Layout with Clean Sidebar
   return (
     <div className="flex-1 min-h-screen bg-slate-50 flex flex-col md:flex-row text-slate-800">
       
-      {/* 1. Sidebar Nav */}
+      {/* 1. Cleaned Sidebar Nav (Only active functional links remaining) */}
       <aside className="w-full md:w-60 bg-slate-900 text-slate-400 flex flex-col shrink-0">
         <div className="p-6 border-b border-slate-800 flex items-center gap-2">
           <div className="h-8 w-8 rounded-xl bg-gradient-to-r from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-extrabold text-sm">NS</div>
@@ -300,37 +329,22 @@ export default function Admin() {
         </div>
         
         <nav className="flex-1 p-4 flex flex-col gap-1.5 text-xs font-medium">
-          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
-            <Layers className="h-4 w-4" /> Dashboard
-          </button>
-          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
-            <Users className="h-4 w-4" /> Users
-          </button>
-          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
-            <Globe className="h-4 w-4" /> Sites
-          </button>
-          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
-            <CreditCard className="h-4 w-4" /> Plans
-          </button>
-          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
-            <ShoppingBag className="h-4 w-4" /> Addons
-          </button>
-          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
-            <Layers className="h-4 w-4" /> Subscriptions
-          </button>
-          <button onClick={() => {}} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-all text-left">
-            <CreditCard className="h-4 w-4" /> Transactions
-          </button>
-          
-          <div className="h-px bg-slate-800 my-4"></div>
-
-          <button onClick={() => setActiveTab('blogs')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'blogs' ? 'bg-indigo-650 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}>
+          <button 
+            onClick={() => setActiveTab('blogs')} 
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'blogs' ? 'bg-indigo-600 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}
+          >
             <BookOpen className="h-4 w-4" /> Website Blogs
           </button>
-          <button onClick={() => setActiveTab('contacts')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'contacts' ? 'bg-indigo-650 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}>
+          <button 
+            onClick={() => setActiveTab('contacts')} 
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'contacts' ? 'bg-indigo-600 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}
+          >
             <Mail className="h-4 w-4" /> Contact Inbox ({contacts.length})
           </button>
-          <button onClick={() => setActiveTab('applications')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'applications' ? 'bg-indigo-650 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}>
+          <button 
+            onClick={() => setActiveTab('applications')} 
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'applications' ? 'bg-indigo-600 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'}`}
+          >
             <Briefcase className="h-4 w-4" /> Careers Applications ({applications.length})
           </button>
         </nav>
@@ -376,9 +390,18 @@ export default function Admin() {
                       <h4 className="font-bold text-slate-800 text-xs">{c.name}</h4>
                       <span className="text-[10px] text-slate-400">{c.email}</span>
                     </div>
-                    <span className="text-[9px] font-mono text-slate-400">{new Date(c.createdAt).toLocaleDateString()}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] font-mono text-slate-400">{new Date(c.createdAt).toLocaleDateString()}</span>
+                      <button
+                        onClick={() => handleDeleteContact(c._id)}
+                        className="p-1 hover:bg-rose-50 text-rose-500 rounded-lg transition-colors"
+                        title="Delete Inquiry"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100 mt-2">
+                  <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-4 border border-slate-100 rounded-xl mt-2">
                     <strong>Subject: {c.subject}</strong><br />
                     {c.message}
                   </p>
@@ -400,9 +423,18 @@ export default function Admin() {
                     <h4 className="font-bold text-slate-800 text-xs">{app.name} ({app.jobTitle})</h4>
                     <span className="text-[10px] text-slate-400">{app.email}</span>
                   </div>
-                  <a href={app.resume} target="_blank" rel="noreferrer" className="px-4 py-2 border text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-colors">
-                    View Resume
-                  </a>
+                  <div className="flex items-center gap-2">
+                    <a href={app.resume} target="_blank" rel="noreferrer" className="px-4 py-2 border text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-colors">
+                      View Resume
+                    </a>
+                    <button
+                      onClick={() => handleDeleteApplication(app._id)}
+                      className="p-2 border border-rose-200 hover:bg-rose-50 text-rose-500 rounded-xl transition-colors"
+                      title="Delete Application log"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               ))
             )}
@@ -621,7 +653,7 @@ export default function Admin() {
               <div className="border border-slate-200 rounded-2xl overflow-hidden mt-2">
                 <div className="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center justify-between">
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Body content editor</span>
-                  <div className="flex bg-slate-200/60 p-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
+                  <div className="flex bg-slate-200 p-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
                     {['visual', 'html', 'css'].map((tab) => (
                       <button
                         key={tab}
@@ -640,7 +672,7 @@ export default function Admin() {
                 <div className="p-4 bg-white">
                   {editorTab === 'visual' && (
                     <div className="flex flex-col gap-2">
-                      <div className="border border-slate-200/80 rounded-xl bg-slate-50 p-2 flex gap-1 items-center mb-1 text-[9px] font-bold text-slate-400">
+                      <div className="border border-slate-200 rounded-xl bg-slate-50 p-2 flex gap-1 items-center mb-1 text-[9px] font-bold text-slate-400">
                         <span>Paragraph</span>
                         <span>|</span>
                         <span className="font-serif">B</span>
@@ -680,28 +712,19 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* Row 6: Featured Image upload */}
+              {/* Row 6: Real Image Upload File Picker */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Featured Image URL</label>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Featured Image File</label>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
-                      <Image className="absolute left-3 top-2.5 h-4 w-4 text-slate-450" />
                       <input
-                        type="text"
-                        value={newBlog.imageUrl}
-                        onChange={(e) => setNewBlog({ ...newBlog, imageUrl: e.target.value })}
-                        placeholder="https://unsplash.com/.../hero.jpg"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-indigo-500 font-mono"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageFileChange}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 cursor-pointer"
                       />
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleMockUpload}
-                      className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all shrink-0"
-                    >
-                      Upload
-                    </button>
                     {newBlog.imageUrl && (
                       <button
                         type="button"
@@ -713,6 +736,11 @@ export default function Admin() {
                       </button>
                     )}
                   </div>
+                  {newBlog.imageUrl && (
+                    <div className="mt-2 h-20 w-32 border border-slate-200 rounded-lg overflow-hidden shrink-0 shadow-sm">
+                      <img src={newBlog.imageUrl} alt="preview" className="h-full w-full object-cover" />
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -750,7 +778,7 @@ export default function Admin() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2.5 bg-indigo-650 hover:bg-indigo-700 text-white text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98]"
+                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98]"
                 >
                   {submitting ? 'Creating...' : 'Create'}
                 </button>
