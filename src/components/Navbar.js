@@ -15,6 +15,10 @@ export default function Navbar() {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   const mainLinks = [
     { name: 'About', href: '/about' },
     { name: 'Services', href: '/services', hasDropdown: true },

@@ -26,6 +26,38 @@ export default function Contact() {
     }
   };
 
+  const [selectedDate, setSelectedDate] = useState({ day: 'Wed', num: 3 });
+  const [selectedSlot, setSelectedSlot] = useState('11:30 AM');
+  const [bookingName, setBookingName] = useState('');
+  const [bookingEmail, setBookingEmail] = useState('');
+  const [bookingSubmitted, setBookingSubmitted] = useState(false);
+
+  const handleBookingSubmit = async (e) => {
+    e.preventDefault();
+    if (!bookingName || !bookingEmail) return;
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const res = await fetch(`${apiBase}/contacts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: bookingName,
+          email: bookingEmail,
+          subject: 'Consultation Call Booking',
+          message: `Consultation call scheduled for ${selectedDate.day}, June ${selectedDate.num} (2026) at ${selectedSlot}`
+        })
+      });
+      if (res.ok) {
+        setBookingSubmitted(true);
+        setBookingName('');
+        setBookingEmail('');
+        setTimeout(() => setBookingSubmitted(false), 5000);
+      }
+    } catch (err) {
+      console.error('Failed to submit booking:', err);
+    }
+  };
+
   const dates = [
     { day: 'Mon', num: 1 },
     { day: 'Tue', num: 2 },
@@ -120,7 +152,7 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="mt-2 py-3 bg-gradient-to-r from-indigo-500 to-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider"
+                  className="mt-2 py-3 bg-gradient-to-r from-indigo-500 to-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 active:scale-[0.99]"
                 >
                   Send Inquiry
                 </button>
@@ -128,7 +160,7 @@ export default function Contact() {
             )}
           </div>
 
-          {/* Right Panel: Calendar Scheduling Booking mock */}
+          {/* Right Panel: Calendar Scheduling Booking */}
           <div className="p-6 border border-slate-200 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-900/10 rounded-3xl flex flex-col justify-between">
             <div>
               <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-1.5">
@@ -138,7 +170,7 @@ export default function Contact() {
                 Pick a slot to discuss system integrations directly with our Chief Architect Elena Rostova.
               </p>
 
-              {/* Date pickers mock */}
+              {/* Date pickers */}
               <div className="mb-6">
                 <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400 mb-2">Select Date (June 2026)</span>
                 <div className="grid grid-cols-5 gap-2 text-center text-xs">
@@ -146,9 +178,10 @@ export default function Contact() {
                     <button
                       key={d.num}
                       type="button"
+                      onClick={() => setSelectedDate(d)}
                       className={`p-3 border rounded-xl flex flex-col items-center gap-1 transition-all ${
-                        d.num === 3
-                          ? 'border-emerald-500 bg-emerald-500/10 text-slate-900 dark:text-white'
+                        selectedDate.num === d.num
+                          ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 font-bold'
                           : 'border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-950'
                       }`}
                     >
@@ -159,7 +192,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              {/* Time Slots pickers mock */}
+              {/* Time Slots pickers */}
               <div className="mb-6">
                 <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400 mb-2">Available Slots</span>
                 <div className="grid grid-cols-2 gap-2 text-center text-xs">
@@ -167,9 +200,10 @@ export default function Contact() {
                     <button
                       key={idx}
                       type="button"
+                      onClick={() => setSelectedSlot(s)}
                       className={`py-2 px-3 border rounded-xl font-bold transition-all ${
-                        idx === 1
-                          ? 'border-indigo-500 bg-indigo-500/10 text-slate-900 dark:text-white'
+                        selectedSlot === s
+                          ? 'border-indigo-500 bg-indigo-500/10 text-indigo-600 dark:text-indigo-450'
                           : 'border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-950'
                       }`}
                     >
@@ -180,15 +214,45 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="p-4 bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                <Mail className="h-4 w-4 text-slate-500" />
-              </div>
-              <div className="text-xs">
-                <span className="block text-[9px] text-slate-400 font-semibold uppercase">Direct Email</span>
-                <span className="block font-bold text-slate-800 dark:text-white">elena@novastacklabs.com</span>
-              </div>
+            {/* Consultation Contact Input Form */}
+            <div className="mt-4 p-4 bg-white dark:bg-slate-950 border border-slate-150 dark:border-slate-800 rounded-2xl flex flex-col gap-3">
+              {bookingSubmitted ? (
+                <div className="py-6 text-center flex flex-col items-center gap-1">
+                  <CheckCircle className="h-6 w-6 text-emerald-500" />
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-900 dark:text-white mt-1">Slot Reserved!</span>
+                  <p className="text-[10px] text-slate-500">Elena will meet you on {selectedDate.day}, June {selectedDate.num} at {selectedSlot}.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleBookingSubmit} className="flex flex-col gap-3">
+                  <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400">Your Booking Info</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      required
+                      value={bookingName}
+                      onChange={(e) => setBookingName(e.target.value)}
+                      placeholder="Name"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                    />
+                    <input
+                      type="email"
+                      required
+                      value={bookingEmail}
+                      onChange={(e) => setBookingEmail(e.target.value)}
+                      placeholder="Email"
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-650 hover:to-emerald-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-1"
+                  >
+                    Confirm Consultation Slot
+                  </button>
+                </form>
+              )}
             </div>
+
           </div>
 
         </div>

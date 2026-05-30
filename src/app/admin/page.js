@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   ShieldAlert, LogIn, Mail, FolderHeart, FileText, Trash2, Send, 
   Plus, Briefcase, BookOpen, Layers, Search, Eye, Edit, X, Image, 
@@ -15,6 +15,7 @@ export default function Admin() {
   const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('Any');
+  const fileInputRef = useRef(null);
 
   // Lists
   const [contacts, setContacts] = useState([]);
@@ -646,15 +647,12 @@ export default function Admin() {
                       </button>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Row 5: Editor visual/html/css tabs */}
+                           {/* Row 5: Editor visual/html/css/preview tabs */}
               <div className="border border-slate-200 rounded-2xl overflow-hidden mt-2">
                 <div className="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center justify-between">
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Body content editor</span>
                   <div className="flex bg-slate-200 p-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider">
-                    {['visual', 'html', 'css'].map((tab) => (
+                    {['visual', 'html', 'css', 'preview'].map((tab) => (
                       <button
                         key={tab}
                         type="button"
@@ -675,7 +673,7 @@ export default function Admin() {
                       <div className="border border-slate-200 rounded-xl bg-slate-50 p-2 flex gap-1 items-center mb-1 text-[9px] font-bold text-slate-400">
                         <span>Paragraph</span>
                         <span>|</span>
-                        <span className="font-serif">B</span>
+                        <span className="font-serif font-bold">B</span>
                         <span className="italic">I</span>
                         <span className="underline">U</span>
                         <span className="line-through">S</span>
@@ -709,22 +707,50 @@ export default function Admin() {
                       className="w-full border border-slate-200 rounded-xl p-3 text-xs focus:outline-none font-mono resize-none bg-slate-950 text-indigo-400"
                     />
                   )}
+
+                  {editorTab === 'preview' && (
+                    <div className="border border-slate-200 rounded-xl p-4 bg-white text-xs leading-relaxed max-h-[300px] overflow-y-auto">
+                      {newBlog.cssContent && (
+                        <style dangerouslySetInnerHTML={{ __html: newBlog.cssContent }} />
+                      )}
+                      {newBlog.content ? (
+                        <div dangerouslySetInnerHTML={{ __html: newBlog.content }} />
+                      ) : (
+                        <span className="text-slate-400 italic">No content written yet. Switch to Visual or HTML tab to edit content.</span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Row 6: Real Image Upload File Picker */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Featured Image File</label>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">FEATURED IMAGE URL</label>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageFileChange}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 cursor-pointer"
+                        type="text"
+                        value={newBlog.imageUrl}
+                        onChange={(e) => setNewBlog({ ...newBlog, imageUrl: e.target.value })}
+                        placeholder="https://images.unsplash..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 font-mono"
                       />
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm shrink-0"
+                    >
+                      UPLOAD
+                    </button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      onChange={handleImageFileChange}
+                      className="hidden"
+                    />
                     {newBlog.imageUrl && (
                       <button
                         type="button"
@@ -737,7 +763,7 @@ export default function Admin() {
                     )}
                   </div>
                   {newBlog.imageUrl && (
-                    <div className="mt-2 h-20 w-32 border border-slate-200 rounded-lg overflow-hidden shrink-0 shadow-sm">
+                    <div className="mt-2 h-20 w-32 border border-slate-200 rounded-lg overflow-hidden shrink-0 shadow-sm relative group">
                       <img src={newBlog.imageUrl} alt="preview" className="h-full w-full object-cover" />
                     </div>
                   )}

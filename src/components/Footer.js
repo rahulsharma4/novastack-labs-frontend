@@ -3,10 +3,16 @@
 import { useState } from 'react';
 import Logo from './Logo';
 import { Send, MapPin, Mail, PhoneCall } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const pathname = usePathname();
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
